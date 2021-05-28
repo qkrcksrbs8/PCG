@@ -31,7 +31,7 @@ public class Main {
         int x = -1;
         int sum = 0;
         for (int i = 0; i < N; i++) {
-        	if(arr[i][0] == x) continue;
+        	if(arr[i][0] == x) continue;//
         	sum += arr[i][1];
         	x = arr[i][0];
         }
