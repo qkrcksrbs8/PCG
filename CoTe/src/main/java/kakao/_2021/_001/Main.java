@@ -1,8 +1,14 @@
 package kakao._2021._001;
 
+/**
+ * 카카오 아이디 찾기
+ *
+ */
 public class Main {
  
     public static void main(String[] args) throws Exception {
+    	// "...!@BaT#*..y.abcdefghijklm"
+    	// "bat.y.abcdefghi"
     	
     }
     
