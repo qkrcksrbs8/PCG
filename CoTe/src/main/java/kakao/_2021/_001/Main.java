@@ -1,53 +1,88 @@
 package kakao._2021._001;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- * 카카오 아이디 찾기
+ * 순위검색
  *
  */
 public class Main {
  
     public static void main(String[] args) throws Exception {
-    	// "...!@BaT#*..y.abcdefghijklm"
-    	// "bat.y.abcdefghi"
     	
     }
     
     class Solution{
-    	boolean isValid(char c) {
-    		if(Character.isLetterOrDigit(c)) return true;
-    		if(c == '-' || c == '_' || c == '.') return true;
-    		return false;
-    	}
+    	Map<String, Integer> Wordmap = new HashMap<String, Integer>(); 
+    	List<List<Integer>> ScoreList = new ArrayList<List<Integer>>();
     	
-    	public String solution(String new_id) {
-    		StringBuilder answer = new StringBuilder();
+    	public int[] solution(String[] info, String[] query) {
+    		Wordmap.put("-", 0);
+    		Wordmap.put("cpp", 1);
+    		Wordmap.put("java", 2);
+    		Wordmap.put("python", 3);
+    		Wordmap.put("backend", 1);
+    		Wordmap.put("frontend", 2);
+    		Wordmap.put("junior", 1);
+    		Wordmap.put("senior", 2);
+    		Wordmap.put("chicken", 1);
+    		Wordmap.put("pizza", 2);
+    		for (int i=0; i<4*3*3*3; ++i) {
+    			ScoreList.add(new ArrayList<>());
+    		}
     		
-    		boolean lastDot = false;
-    		for(char ch : new_id.toCharArray()) {
-    			if(isValid(ch) == false) continue;
-    			if(ch == '.') {
-    				if(answer.length() == 0 || lastDot) continue;
-    				lastDot = true;
+    		for (String str : info) {
+    			String[] word = str.split(" ");
+    			int[] arr= {Wordmap.get(word[0])
+    						,Wordmap.get(word[1])
+    						,Wordmap.get(word[2])
+    						,Wordmap.get(word[3])
+    					   };
+    			int score = Integer.parseInt(word[4]);
+    			
+    			for (int i=0; i<(1<<4); ++i) {
+    				int idx = 0;
+    				for (int j = 0; j < 4; ++j) {
+    					if((i & (1<<j)) != 0) {
+    						 idx += arr[j];
+    					}
+    				}
+    				ScoreList.get(idx).add(score);
+    			}
+    		}
+    		for (int i=0; i<4*3*3*3; ++i) {
+    			Collections.sort(ScoreList.get(i));
+    		}
+    		
+    		int[] answer = new int[query.length];
+    		for (int i=0; i<query.length; ++i) {
+    			String[] word = query[i].split(" ");
+    			int idx = Wordmap.get(word[0])*3*3*3 +
+    					  Wordmap.get(word[2])*3*3 +
+    					  Wordmap.get(word[4])*3 +
+    					  Wordmap.get(word[6]);
+    			int score = Integer.parseInt(word[7]);
+    			int ret	  = Collections.binarySearch(ScoreList.get(idx),score);
+    			if (ret < 0) {
+    				ret = -(ret + 1);
     			}
     			else {
-    				lastDot = false;
+    				for (int j = ret - 1; j >= 0; --j) {
+    					if (ScoreList.get(idx).get(j) == score) {
+    						ret = j;
+    					}
+    					else {
+    						break;
+    					}
+    				}
     			}
-    			
-    			ch = Character.toLowerCase(ch);
-    			answer.append(ch);
+    			answer[i] = ScoreList.get(idx).size() - ret;
     		}
-    		
-    		if(answer.length() >= 16) answer.setLength(15);
-    		if(answer.length() == 0) answer.append('a');
-    		if(answer.charAt(answer.length() - 1) == '.') answer.deleteCharAt(answer.length() - 1);    		
-    		if(answer.length() <= 2) {
-    			char ch = answer.charAt(answer.length() - 1);
-    			while (answer.length() < 3) {
-    				answer.append(ch);
-    			}
-    		}
-    		
-    		return answer.toString();
+    		return answer;
     	}
     	
     }
