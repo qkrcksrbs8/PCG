@@ -38,12 +38,10 @@ public class Main {
     				totalSec[i] += 1;
     			}
     		}
-    		
     		long currSum = 0;
     		for (int i = 0; i < advSec; ++i) {
     			currSum += totalSec[i];
     		}
-    		
     		long maxSum = currSum;
     		int maxIdx = 0;
     		for (int i = advSec; i < playSec; ++i) {
@@ -51,11 +49,8 @@ public class Main {
     			if (currSum > maxSum) {
     				maxSum = currSum;
     				maxIdx = i - advSec +1;
-    			
     			}
     		}
-    		
-    		
     		return String.format("%02d:%02d:%02d", maxIdx / 3600
     							, maxIdx / 60 % 60
     							, maxIdx / 60);
