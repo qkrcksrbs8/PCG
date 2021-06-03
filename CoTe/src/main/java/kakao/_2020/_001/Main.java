@@ -2,6 +2,8 @@ package kakao._2020._001;
 
 public class Main {
  
+	//카카오 2020 문자열 압축
+	
     public static void main(String[] args) throws Exception {
     	
     }
@@ -10,6 +12,7 @@ public class Main {
     	public int solution(String s) {
     		int answer = s.length();
     		
+    		//절반까지 조회
     		for (int i = 1; i <= s.length()/2; ++i) {
     			int pos = 0;
     			int len = s.length();
