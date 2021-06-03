@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 카카오 코딩테스트 2021 메뉴 리뉴얼
+ * 카카오 코딩테스트 2021 최소요금
  *
  */
 public class Main {
