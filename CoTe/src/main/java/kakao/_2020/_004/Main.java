@@ -1,7 +1,7 @@
 package kakao._2020._004;
 import java.util.*;
 
-//카카오 2020 괄호 변환
+//카카오 2020 자물쇠
 public class Main {
  
     public static void main(String[] args) throws Exception {
