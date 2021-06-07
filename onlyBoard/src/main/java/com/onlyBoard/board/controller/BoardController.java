@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,56 +32,17 @@ public class BoardController {
 	 * 게시판 조회
 	 */
 	@RequestMapping(value="/boardList")
-	public ModelAndView boardList(@RequestParam(value="pageNum",defaultValue="1")int currentPage
-								, @RequestParam(value="keyField", required =false) String keyField
-								, @RequestParam(value="keyWord", required =false) String keyWord
-								) {
-
-		logger.info("boardList() : start");						//boardList 시작
-		logger.info("keyField : "+keyField);					
-		logger.info("keyWord : "+keyWord);
-		
-		List<BoardVO> boardList = new ArrayList<BoardVO>();		//게시판 리스트
-		Map<String, Object> map = new HashMap<String, Object>();//페이징 map
-		map.put("keyField", keyField);							//검색분야
-		map.put("keyWord", keyWord);							//검색어
-		
-		int count = boardService.selectBoardCnt(map);			//게시판 리스트 수 조회
-		logger.info("count : "+count);							//게시판 리스트 수 로그로 찍기
-
-		PagingUtil page;//페이징 처리를 위한 객체 선언
-		
-		if(keyWord == null) {
-			page = new PagingUtil(currentPage, count, 5,2, "boardList.do");							//검색어가 있다면
-		}else {
-			page = new PagingUtil(keyField, keyWord, currentPage, count, 5,2, "boardList.do",null);	//검색어가 없다면
+	public ModelAndView boardList(HttpServletRequest request) {
+		ModelAndView  mav = new ModelAndView("board");	//board model 선언
+		try {
+			Map<String, Object> map =boardService.selectPaging(request);
+			mav.setViewName("main/board");					//jsp 경로
+			mav.addObject("map", map);						//총레코드수
 		}
-		
-
-		//--------------------------------
-		//start->페이지당 맨 첫번째 나오는 게시물번호
-		//--------------------------------
-		map.put("start", page.getStartCount());	//시작 게시물번호
-		map.put("end", page.getEndCount());		//마지막게시물번호
-
-		//---------------------------
-		//게시물이 1개 이상 존재하면 리스트 조회
-		//---------------------------
-		if(count > 0) {
-			
-			boardList = boardService.selectBoardList(map);//게시판 리스트 조회
-			
-		};//if
-		
-		ModelAndView  mav = new ModelAndView("board");		//board model 선언
-		mav.setViewName("main/board");						//jsp 경로
-		mav.addObject("count", count);						//총레코드수
-		mav.addObject("boardList", boardList);				//게시판 리스트
-		mav.addObject("pagingHtml", page.getPagingHtml());	//링크문자열을 전달
-		mav.addObject("keyWord", keyWord);					//검색어 전달
-		
-		logger.info(boardList.toString());					//VO 로그로 찍어보기
-		logger.info("boardList() : end");					//board 종료
+		catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.error(e.toString());
+		}
 		return mav;
 	}
 	
@@ -88,21 +52,11 @@ public class BoardController {
 	 * @return
 	 */
 	@RequestMapping(value="/boardDetail")
-	public ModelAndView boardDetail(@RequestParam(value="board_seq") int board_seq) {
-		
-		logger.info("start");	
-		logger.info("board_seq : "+board_seq);
-		BoardVO boardList = boardService.selectBoard(board_seq);//게시판 상세 조회
-		boardList.getBoard_seq();
-		
-		logger.info(boardList.toString());
-		
+	public ModelAndView boardDetail(HttpServletRequest request) {
+		Map<String, Object> map = boardService.boardDetail(request);
 		ModelAndView  mav = new ModelAndView("boardDetail");
-		mav.setViewName("main/boardDetail");//jsp 경로
-		mav.addObject("boardList", boardList);//게시판 리스트
-		
-		logger.info("end");
-		
+		mav.setViewName("main/boardDetail");			//JSP 경로
+		mav.addObject("boardList", map.get("boardList"));//게시판 리스트
 		return mav;
 	}
 

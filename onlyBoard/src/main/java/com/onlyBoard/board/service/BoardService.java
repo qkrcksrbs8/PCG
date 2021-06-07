@@ -3,6 +3,8 @@ package com.onlyBoard.board.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.onlyBoard.board.model.BoardVO;
 
 /**
@@ -43,4 +45,18 @@ public interface BoardService {
 	 * 게시글 작성
 	 */
 	public String insertBoard(Map<String, Object> map);
+	
+	/**
+	 * 페이징 처리
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> selectPaging(HttpServletRequest request);
+	
+	/**
+	 * 게시판 상세조회
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> boardDetail(HttpServletRequest request);
 }

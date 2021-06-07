@@ -1,8 +1,11 @@
 package com.onlyBoard.board.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.onlyBoard.board.dao.BoardDAO;
 import com.onlyBoard.board.model.BoardVO;
 import com.onlyBoard.board.service.BoardService;
+import com.onlyBoard.board.util.PagingUtil;
 
 /**
  * 게시판 ServiceImpl 정의
@@ -27,21 +31,15 @@ public class BoardServiceImpl implements BoardService {
 	/* 
 	 * 게시글 리스트 수 조회	
 	 */
-	public int selectBoardCnt(Map<String, Object> map) {
-		
-		int boardCnt = 0;//게시판 리스트 수
-		
+	public int selectBoardCnt(Map<String, Object> map) {	
+		int boardCnt = 0;
 		try {
-			
-			boardCnt = boardDAO.selectBoardCnt(map);//게시판 리스트 수 조회
-		
-		}catch(Exception e) {
-			
+			boardCnt = boardDAO.selectBoardCnt(map);
+		}
+		catch (Exception e) {
 			logger.error("selectBoardCnt()");
-			logger.error(e.toString());
-			
-		}//try
-		
+			logger.error(e.toString());	
+		}
 		return boardCnt;
 	}
 	
@@ -152,4 +150,76 @@ public class BoardServiceImpl implements BoardService {
 		
 		return resultCode;
 	}
+	
+	/* 
+	 * 페이징처리
+	 */
+	public Map<String, Object> selectPaging(HttpServletRequest request) {
+		
+		Map<String, Object> map = getDefaultPaingMap(request);
+		String keyField	= (String)map.get("keyField");
+		String keyWord	= (String)map.get("keyWord");
+		int currentPage = Integer.parseInt((String)map.get("currentPage"));
+		int count = selectBoardCnt(map);	//게시판 리스트 수 조회
+		PagingUtil page;					//페이징 처리를 위한 객체 선언
+		if (null == keyWord) {//검색어가 있다면
+			page = new PagingUtil(currentPage, count, 5,2, "boardList.do");							
+		}
+		else {				  //검색어가 없다면
+			page = new PagingUtil(keyField, keyWord, currentPage, count, 5,2, "boardList.do",null);	
+		}
+		
+		map.put("start", page.getStartCount());	//시작 게시물번호
+		map.put("end", page.getEndCount());		//마지막게시물번호
+
+		//---------------------------
+		//게시물이 1개 이상 존재하면 리스트 조회
+		//---------------------------
+		List<BoardVO> boardList = new ArrayList<BoardVO>();		//게시판 리스트
+		if (0 < count ) {
+			boardList = selectBoardList(map);//게시판 리스트 조회
+		};//if
+
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("count", count);						//총레코드수
+		resultMap.put("boardList", boardList);				//게시판 리스트
+		resultMap.put("pagingHtml", page.getPagingHtml());	//링크문자열을 전달
+		resultMap.put("keyWord", keyWord);					//검색어 전달
+		return resultMap;
+	}
+	
+	/**
+	 * 게시판 상세 조회
+	 * @param request 
+	 */
+	public Map<String, Object> boardDetail(HttpServletRequest request) {
+		
+		String seqStr = (String)request.getParameter("board_seq");
+		if ("".equals(seqStr)) return null;
+		int boardSeq = Integer.parseInt(request.getParameter("board_seq"));
+		BoardVO boardList = selectBoard(boardSeq);//게시판 상세 조회
+		boardList.getBoard_seq();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("boardList", boardList);
+		return map;
+	}
+	
+	/**
+	 * 게시판 페이징 Map
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object>getDefaultPaingMap(HttpServletRequest request){
+		int currentPage = 1;//현재 페이지
+		String pageStr	= (String)request.getParameter("pageNum");	//스트링으로 유효성 체크
+		String keyField	= (String)request.getParameter("keyField");	//검색구분
+		String keyWord	= (String)request.getParameter("keyWord");	//검색어
+		if (!"".equals(pageStr)) currentPage = Integer.parseInt(pageStr);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keyField", keyField);		//검색분야
+		map.put("keyWord", keyWord);		//검색어
+		map.put("currentPage", currentPage);//현재 페이지
+		return map;
+	}
+	
 }
