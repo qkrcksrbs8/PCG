@@ -133,21 +133,14 @@ public class BoardServiceImpl implements BoardService {
 	}
 	
 	public String insertBoard(Map<String, Object> map) {
-		
 		String resultCode = "0000";// 0000:정상 / 9000:에러
-		
 		try {
-			
 			boardDAO.insertBoard(map);//게시글 생성
 			resultCode = "0000";// 0000:정상 / 9000:에러
-			
 		}catch(Exception e) {
-			
 			logger.error(e.toString());
 			resultCode = "9000";// 0000:정상 / 9000:에러
-			
 		}//try
-		
 		return resultCode;
 	}
 	
