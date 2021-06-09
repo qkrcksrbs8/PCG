@@ -149,37 +149,37 @@ public class BoardServiceImpl implements BoardService {
 	 * 페이징처리
 	 */
 	public Map<String, Object> selectPaging(HttpServletRequest request) {
-		
-		Map<String, Object> map = getDefaultPaingMap(request); 
-		String keyField	= Utility.convertNull((String)map.get("keyField"));
-		String keyWord	= Utility.convertNull((String)map.get("keyWord"));
- 		int currentPage = (Integer) map.get("currentPage");
-		int count = selectBoardCnt(map);	 //게시판 리스트 수 조회
-		PagingUtil page;					//페이징 처리를 위한 객체 선언
-		if (null == keyWord) {//검색어가 있다면
-			page = new PagingUtil(currentPage, count, 5,2, "boardList.do");							
-		}
-		else {				  //검색어가 없다면
-			page = new PagingUtil(keyField, keyWord, currentPage, count, 5,2, "boardList.do",null);	
-		}
-		
-		map.put("start", page.getStartCount());	//시작 게시물번호
-		map.put("end", page.getEndCount());		//마지막게시물번호
-
-		//---------------------------
-		//게시물이 1개 이상 존재하면 리스트 조회
-		//---------------------------
-		List<BoardVO> boardList = new ArrayList<BoardVO>();		//게시판 리스트
-		if (0 < count ) {
-			boardList = selectBoardList(map);//게시판 리스트 조회
-		};//if
-
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("count", count);						//총레코드수
-		resultMap.put("boardList", boardList);				//게시판 리스트
-		resultMap.put("pagingHtml", page.getPagingHtml());	//링크문자열을 전달
-		resultMap.put("keyWord", keyWord);					//검색어 전달
-		return resultMap;
+		return null;
+//		Map<String, Object> map = getDefaultPaingMap(request); 
+//		String keyField	= Utility.convertNull((String)map.get("keyField"));
+//		String keyWord	= Utility.convertNull((String)map.get("keyWord"));
+// 		int currentPage = (Integer) map.get("currentPage");
+//		int count = selectBoardCnt(map);	 //게시판 리스트 수 조회
+//		PagingUtil page;					//페이징 처리를 위한 객체 선언
+//		if (null == keyWord) {//검색어가 있다면
+//			page = new PagingUtil(currentPage, count, 5,2, "boardList.do");							
+//		}
+//		else {				  //검색어가 없다면
+//			page = new PagingUtil(keyField, keyWord, currentPage, count, 5,2, "boardList.do",null);	
+//		}
+//		
+//		map.put("start", page.getStartCount());	//시작 게시물번호
+//		map.put("end", page.getEndCount());		//마지막게시물번호
+//
+//		//---------------------------
+//		//게시물이 1개 이상 존재하면 리스트 조회
+//		//---------------------------
+//		List<BoardVO> boardList = new ArrayList<BoardVO>();		//게시판 리스트
+//		if (0 < count ) {
+//			boardList = selectBoardList(map);//게시판 리스트 조회
+//		};//if
+//
+//		Map<String, Object> resultMap = new HashMap<String, Object>();
+//		resultMap.put("count", count);						//총레코드수
+//		resultMap.put("boardList", boardList);				//게시판 리스트
+//		resultMap.put("pagingHtml", page.getPagingHtml());	//링크문자열을 전달
+//		resultMap.put("keyWord", keyWord);					//검색어 전달
+//		return resultMap;
 	}
 	
 	/**
