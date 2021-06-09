@@ -1,8 +1,6 @@
 package com.onlyBoard.board.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,15 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.onlyBoard.board.model.BoardVO;
 import com.onlyBoard.board.service.BoardService;
-import com.onlyBoard.board.util.PagingUtil;
 
 @Controller
 public class BoardController {
@@ -35,15 +30,16 @@ public class BoardController {
 	public ModelAndView boardList(HttpServletRequest request) {
 		ModelAndView  mav = new ModelAndView("board");	//board model 선언
 		try {
+			logger.info("AAAAAA");
 			Map<String, Object> map =boardService.selectPaging(request);
 			mav.setViewName("main/board");					//jsp 경로
 			mav.addObject("map", map);						//총레코드수
 		}
 		catch (Exception e) {
 			logger.error(e.getMessage());
-			logger.error(e.toString());
+ 			logger.error(e.toString());
 		}
-		return mav;
+ 		return mav;
 	}
 	
 	/**

@@ -15,6 +15,7 @@ import com.onlyBoard.board.dao.BoardDAO;
 import com.onlyBoard.board.model.BoardVO;
 import com.onlyBoard.board.service.BoardService;
 import com.onlyBoard.board.util.PagingUtil;
+import com.onlyBoard.util.Utility;
 
 /**
  * 게시판 ServiceImpl 정의
@@ -149,11 +150,11 @@ public class BoardServiceImpl implements BoardService {
 	 */
 	public Map<String, Object> selectPaging(HttpServletRequest request) {
 		
-		Map<String, Object> map = getDefaultPaingMap(request);
-		String keyField	= (String)map.get("keyField");
-		String keyWord	= (String)map.get("keyWord");
-		int currentPage = Integer.parseInt((String)map.get("currentPage"));
-		int count = selectBoardCnt(map);	//게시판 리스트 수 조회
+		Map<String, Object> map = getDefaultPaingMap(request); 
+		String keyField	= Utility.convertNull((String)map.get("keyField"));
+		String keyWord	= Utility.convertNull((String)map.get("keyWord"));
+ 		int currentPage = (Integer) map.get("currentPage");
+		int count = selectBoardCnt(map);	 //게시판 리스트 수 조회
 		PagingUtil page;					//페이징 처리를 위한 객체 선언
 		if (null == keyWord) {//검색어가 있다면
 			page = new PagingUtil(currentPage, count, 5,2, "boardList.do");							
@@ -204,9 +205,9 @@ public class BoardServiceImpl implements BoardService {
 	 */
 	public Map<String, Object>getDefaultPaingMap(HttpServletRequest request){
 		int currentPage = 1;//현재 페이지
-		String pageStr	= (String)request.getParameter("pageNum");	//스트링으로 유효성 체크
-		String keyField	= (String)request.getParameter("keyField");	//검색구분
-		String keyWord	= (String)request.getParameter("keyWord");	//검색어
+		String pageStr	= Utility.convertNull((String)request.getParameter("pageNum"));	//스트링으로 유효성 체크
+		String keyField	= Utility.convertNull((String)request.getParameter("keyField"));	//검색구분
+		String keyWord	= Utility.convertNull((String)request.getParameter("keyWord"));	//검색어
 		if (!"".equals(pageStr)) currentPage = Integer.parseInt(pageStr);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("keyField", keyField);		//검색분야
